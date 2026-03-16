@@ -3,6 +3,7 @@ import { base_uri } from "../lib/constants";
 import type { LoginRequest } from "../types/LoginRequest";
 import type { LoginResponse } from "../types/LoginResponse";
 import type { RegisterResponse } from "@/types/RegisterResponse";
+import type { AuthUser } from "@/types/AuthUser";
 
 export const login = async (
   credentials: LoginRequest,
@@ -56,4 +57,16 @@ export const logout = async (token: string): Promise<void> => {
   if (!response.ok) {
     throw new Error("Logout Failed");
   }
+};
+
+export const checkUser = async (): Promise<AuthUser> => {
+  const response = await fetch(`${base_uri}user`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Not authenticated");
+  }
+  return response.json();
 };
