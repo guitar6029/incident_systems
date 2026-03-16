@@ -12,6 +12,7 @@ export const login = async (
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(credentials),
   });
 
@@ -49,6 +50,7 @@ export const logout = async (token: string): Promise<void> => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
   });
 
   if (!response.ok) {
