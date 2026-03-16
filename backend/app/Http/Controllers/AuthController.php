@@ -58,4 +58,21 @@ class AuthController extends Controller
             'message' => 'Logged out'
         ]);
     }
+
+    public function user(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email
+        ]);
+    }
 }
