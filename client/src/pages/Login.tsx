@@ -15,7 +15,7 @@ function Login() {
       await login({ email, password });
       //if ok redirect
       toast.success("Welcome back");
-      navigate("/incidents");
+      navigate("/dashboard");
     } catch (error) {
       console.error(`Error : ${error}`);
       toast.error("Invalid email or password");
