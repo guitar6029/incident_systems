@@ -3,8 +3,9 @@ import { apiClient } from "@/lib/apiClient";
 import type { Incident } from "@/types/Incident/incident";
 import type { IncidentPayload } from "@/types/Incident/IncidentPayload";
 import type { IncidentResponse } from "@/types/Incident/IncidentResponse";
+import type { PaginatedResponse } from "@/types/PaginatedResponse";
 
-export const getIncidents = async (): Promise<Incident[]> => {
+export const getIncidents = async (): Promise<PaginatedResponse<Incident>> => {
   const response = await fetch(`${API_BASE}incidents`, {
     method: "GET",
     credentials: "include",
@@ -14,8 +15,8 @@ export const getIncidents = async (): Promise<Incident[]> => {
     throw new Error("Incidents request failed");
   }
 
-  const json = await response.json();
-  return json.data;
+  const data = await response.json();
+  return data;
 };
 
 export const createIncident = async (

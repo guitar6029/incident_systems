@@ -1,38 +1,23 @@
-import { getIncidents } from "@/api/incidents";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { useState } from "react";
 import type { Incident } from "@/types/Incident/incident";
 import { Link } from "react-router-dom";
+import useIncidents from "@/hooks/useIncidents";
 function Incidents() {
-  const [incidents, setIncidents] = useState<Incident[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchIncidents = async () => {
-      try {
-        const data = await getIncidents();
+  const { data, isError, isLoading } = useIncidents();
+  const incidents = data?.data ?? [];
+  const total = data?.total;
+  const page = data?.current_page;
 
-        setIncidents(data);
-        setLoading(false);
-      } catch (error) {
-        console.error(`Error : ${error}`);
-        toast.error("Error fetching incidents.");
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (isError) {
+    return <div>Something went wrong</div>;
+  }
 
-    fetchIncidents();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div>loading</div>;
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <h1>Incidents</h1>
+      <h1>Incidents {total}</h1>
       <div className="flex w-full items-end justify-end">
         <Link to="/incidents/incident-new">
           <button>Create Incident</button>
