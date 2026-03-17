@@ -7,6 +7,7 @@ import ProviderWrapper from "./providers/ProviderWrapper";
 import ProtectedRoute from "./guards/ProtectedRoute";
 import GuestRoute from "./guards/GuestRoute";
 import Dashboard from "./pages/Dashboard";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
   return (
@@ -30,22 +31,12 @@ function App() {
               </GuestRoute>
             }
           />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/incidents"
-            element={
-              <ProtectedRoute>
-                <Incidents />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<MainLayout children={undefined} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/incidents" element={<Incidents />} />
+            </Route>
+          </Route>
         </Routes>
       </ProviderWrapper>
     </>

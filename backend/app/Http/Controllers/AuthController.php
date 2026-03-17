@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class AuthController extends Controller
 {
@@ -29,30 +31,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        Log::info('LOGIN INPUT', $request->all());
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials, true)) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
+                'received' => $credentials
             ], 401);
         }
 
-        $user = $request->user();
-
-        $token = $user->createToken('api-token')->plainTextToken;
+        $request->session()->regenerate();
 
         return response()->json([
-            'token' => $token,
-            'user' => $user
+            'message' => 'Logged in'
         ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete;
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'message' => 'Logged out'

@@ -1,19 +1,36 @@
 import type { RegisterRequest } from "@/types/RegisterRequest";
-import { base_uri } from "../lib/constants";
 import type { LoginRequest } from "../types/LoginRequest";
 import type { LoginResponse } from "../types/LoginResponse";
 import type { RegisterResponse } from "@/types/RegisterResponse";
 import type { AuthUser } from "@/types/AuthUser";
+import { BASE_URL, API_BASE } from "../lib/constants";
 
+// helper
+function getCookie(name: string) {
+  return document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(name + "="))
+    ?.split("=")[1];
+}
+
+// LOGIN
 export const login = async (
   credentials: LoginRequest,
 ): Promise<LoginResponse> => {
-  const response = await fetch(`${base_uri}login`, {
+  // ✅ MUST use BASE_URL (no /api)
+  await fetch(`${BASE_URL}sanctum/csrf-cookie`, {
+    credentials: "include",
+  });
+
+  const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN") ?? "");
+
+  const response = await fetch(`${API_BASE}login`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "X-XSRF-TOKEN": xsrfToken,
     },
-    credentials: "include",
     body: JSON.stringify(credentials),
   });
 
@@ -21,15 +38,21 @@ export const login = async (
     throw new Error("Login Failed");
   }
 
-  const data: LoginResponse = await response.json();
-  return data;
+  return response.json();
 };
 
+// REGISTER
 export const register = async (
   registerData: RegisterRequest,
 ): Promise<RegisterResponse> => {
-  const response = await fetch(`${base_uri}register`, {
+  // (optional but recommended for consistency)
+  await fetch(`${BASE_URL}sanctum/csrf-cookie`, {
+    credentials: "include",
+  });
+
+  const response = await fetch(`${API_BASE}register`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -40,17 +63,13 @@ export const register = async (
     throw new Error("Register Failed");
   }
 
-  const data: RegisterResponse = await response.json();
-  return data;
+  return response.json();
 };
 
-export const logout = async (token: string): Promise<void> => {
-  const response = await fetch(`${base_uri}logout`, {
+// LOGOUT
+export const logout = async (): Promise<void> => {
+  const response = await fetch(`${API_BASE}logout`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
     credentials: "include",
   });
 
@@ -59,14 +78,19 @@ export const logout = async (token: string): Promise<void> => {
   }
 };
 
-export const checkUser = async (): Promise<AuthUser> => {
-  const response = await fetch(`${base_uri}user`, {
+// CHECK USER
+export const checkUser = async (): Promise<AuthUser | null> => {
+  const response = await fetch(`${API_BASE}user`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
   });
 
-  if (!response.ok) {
-    throw new Error("Not authenticated");
+  if (response.status === 401) {
+    return null;
   }
+
   return response.json();
 };

@@ -1,9 +1,13 @@
 import type { FormEvent } from "react";
-import { login } from "@/api/auth";
+import { checkUser, login } from "@/api/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/providers/AuthProvider";
+
 function Login() {
   const navigate = useNavigate();
+
+  const { setUser } = useAuth();
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -13,6 +17,10 @@ function Login() {
     const password = formData.get("password") as string;
     try {
       await login({ email, password });
+
+      const user = await checkUser();
+      setUser(user);
+
       //if ok redirect
       toast.success("Welcome back");
       navigate("/dashboard");
