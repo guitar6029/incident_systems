@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\IncidentStatus;
 use App\Models\Incident;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class IncidentController extends Controller
 {
@@ -34,10 +36,14 @@ class IncidentController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'severity' => 'required|in:low,medium,high',
+            'status' => ['sometimes', new Enum(IncidentStatus::class)]
         ]);
 
-        $incident = Incident::create($validated);
+        $validated['status'] = $validated['status'] ?? IncidentStatus::OPEN;
+
+        $incident = $request->user()->incidents()->create($validated);
 
         return response()->json($incident, 201);
     }
