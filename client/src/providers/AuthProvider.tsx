@@ -2,11 +2,15 @@ import { checkUser } from "@/api/auth";
 import type { AuthUser } from "@/types/AuthUser";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { logout as logoutUser } from "@/api/auth";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   setUser: (user: AuthUser | null) => void;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,6 +18,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  async function logout() {
+    try {
+      await logoutUser();
+      setUser(null);
+      navigate("/");
+    } catch (error) {
+      toast.error("Trouble logging out...");
+    }
+  }
 
   async function checkAuth() {
     try {
@@ -32,7 +47,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -4,6 +4,7 @@ import type { LoginResponse } from "../types/LoginResponse";
 import type { RegisterResponse } from "@/types/RegisterResponse";
 import type { AuthUser } from "@/types/AuthUser";
 import { BASE_URL, API_BASE } from "../lib/constants";
+import { apiClient } from "@/lib/apiClient";
 
 // helper
 function getCookie(name: string) {
@@ -68,14 +69,9 @@ export const register = async (
 
 // LOGOUT
 export const logout = async (): Promise<void> => {
-  const response = await fetch(`${API_BASE}logout`, {
+  await apiClient("logout", {
     method: "POST",
-    credentials: "include",
   });
-
-  if (!response.ok) {
-    throw new Error("Logout Failed");
-  }
 };
 
 // CHECK USER

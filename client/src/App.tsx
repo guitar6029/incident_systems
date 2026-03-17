@@ -8,6 +8,7 @@ import ProtectedRoute from "./guards/ProtectedRoute";
 import GuestRoute from "./guards/GuestRoute";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./layouts/MainLayout";
+import Landing from "./pages/Landing";
 
 function App() {
   return (
@@ -15,8 +16,10 @@ function App() {
       <ProviderWrapper>
         <Toaster richColors />
         <Routes>
+          <Route path="/" element={<Landing />} />
+
           <Route
-            path="/"
+            path="/login"
             element={
               <GuestRoute>
                 <Login />
