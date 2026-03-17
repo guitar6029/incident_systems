@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Incidents from "./pages/Incidents";
+import Incidents from "./pages/Incidents/Incidents";
 import { Toaster } from "sonner";
 import ProviderWrapper from "./providers/ProviderWrapper";
 import ProtectedRoute from "./guards/ProtectedRoute";
@@ -9,6 +9,7 @@ import GuestRoute from "./guards/GuestRoute";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./layouts/MainLayout";
 import Landing from "./pages/Landing";
+import CreateIncident from "./pages/Incidents/CreateIncident";
 
 function App() {
   return (
@@ -38,6 +39,10 @@ function App() {
             <Route element={<MainLayout children={undefined} />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/incidents" element={<Incidents />} />
+              <Route
+                path="/incidents/incident-new"
+                element={<CreateIncident />}
+              />
             </Route>
           </Route>
         </Routes>

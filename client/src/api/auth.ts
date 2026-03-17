@@ -5,20 +5,12 @@ import type { RegisterResponse } from "@/types/RegisterResponse";
 import type { AuthUser } from "@/types/AuthUser";
 import { BASE_URL, API_BASE } from "../lib/constants";
 import { apiClient } from "@/lib/apiClient";
-
-// helper
-function getCookie(name: string) {
-  return document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(name + "="))
-    ?.split("=")[1];
-}
+import { getCookie } from "@/lib/getCookieHandler";
 
 // LOGIN
 export const login = async (
   credentials: LoginRequest,
 ): Promise<LoginResponse> => {
-  // ✅ MUST use BASE_URL (no /api)
   await fetch(`${BASE_URL}sanctum/csrf-cookie`, {
     credentials: "include",
   });
