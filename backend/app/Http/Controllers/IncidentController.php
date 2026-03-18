@@ -7,9 +7,11 @@ use App\Enums\IncidentSeverity;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class IncidentController extends Controller
 {
+    use AuthorizesRequests;
 
     /**
      * Display a listing of the resource.
@@ -70,6 +72,7 @@ class IncidentController extends Controller
      */
     public function update(Request $request, Incident $incident)
     {
+        $this->authorize('update', $incident);
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
