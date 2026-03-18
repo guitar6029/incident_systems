@@ -73,7 +73,8 @@ class IncidentController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'severity' => ['sometimes', new Enum(IncidentSeverity::class)]
+            'severity' => ['sometimes', new Enum(IncidentSeverity::class)],
+            'status' => ['sometimes', new Enum(IncidentStatus::class)]
         ]);
 
         $incident->update($validated);
