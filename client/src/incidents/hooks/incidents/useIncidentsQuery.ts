@@ -1,4 +1,4 @@
-import { getIncidents } from "@/api/incidents";
+import { getIncidents } from "@/incidents/api/incidents";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useIncidents() {

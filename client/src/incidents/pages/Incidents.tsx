@@ -1,6 +1,6 @@
-import type { Incident } from "@/types/Incident/incident";
+import type { Incident } from "@/types/Incident/Incident";
 import { Link } from "react-router-dom";
-import useIncidents from "@/hooks/useIncidents";
+import useIncidents from "@/incidents/hooks/incidents/useIncidentsQuery";
 function Incidents() {
   const { data, isError, isLoading } = useIncidents();
   const incidents = data?.data ?? [];

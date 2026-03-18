@@ -1,31 +1,30 @@
-import { createIncident } from "@/api/incidents";
+import { createIncident } from "@/incidents/api/incidents";
 import type { IncidentPayload } from "@/types/Incident/IncidentPayload";
 import { SEVERITY_LEVELS } from "@/types/Severity/SeverityLevels";
 import { STATUS_LEVELS } from "@/types/Status/IncidentStatusLevels";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
-
+import useCreateIncidentMutation from "@/incidents/hooks/incidents/useCreateIncidentMutation";
 export default function CreateIncident() {
+  const mutation = useCreateIncidentMutation();
+
   async function handleCreateIncident(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const severity = formData.get("severity") as IncidentPayload["severity"];
-    const status = formData.get("status") as IncidentPayload["status"];
+
     const incident: IncidentPayload = {
-      title,
-      description,
-      severity,
-      status,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      severity: formData.get("severity") as IncidentPayload["severity"],
+      status: formData.get("status") as IncidentPayload["status"],
     };
-    try {
-      await createIncident(incident);
-      toast.success("Incident created");
-      e.currentTarget.reset();
-    } catch (e) {
-      toast.error("Error creating incident");
-    }
+
+    mutation.mutate(incident, {
+      onSuccess: () => {
+        toast.success("Incident created");
+        e.currentTarget.reset();
+      },
+    });
   }
 
   return (

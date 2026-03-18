@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Incidents from "./pages/Incidents/Incidents";
+import Incidents from "./incidents/pages/Incidents";
 import { Toaster } from "sonner";
 import ProviderWrapper from "./providers/ProviderWrapper";
 import ProtectedRoute from "./guards/ProtectedRoute";
@@ -9,7 +9,7 @@ import GuestRoute from "./guards/GuestRoute";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./layouts/MainLayout";
 import Landing from "./pages/Landing";
-import CreateIncident from "./pages/Incidents/CreateIncident";
+import CreateIncident from "./incidents/pages/CreateIncident";
 
 function App() {
   return (

@@ -1,6 +1,6 @@
 import { API_BASE } from "@/lib/constants";
 import { apiClient } from "@/lib/apiClient";
-import type { Incident } from "@/types/Incident/incident";
+import type { Incident } from "@/types/Incident/Incident";
 import type { IncidentPayload } from "@/types/Incident/IncidentPayload";
 import type { IncidentResponse } from "@/types/Incident/IncidentResponse";
 import type { PaginatedResponse } from "@/types/PaginatedResponse";
