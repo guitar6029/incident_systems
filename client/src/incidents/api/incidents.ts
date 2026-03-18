@@ -1,12 +1,14 @@
 import { API_BASE } from "@/lib/constants";
 import { apiClient } from "@/lib/apiClient";
-import type { Incident } from "@/types/Incident/Incident";
 import type { IncidentPayload } from "@/types/Incident/IncidentPayload";
 import type { IncidentResponse } from "@/types/Incident/IncidentResponse";
 import type { PaginatedResponse } from "@/types/PaginatedResponse";
+import type { Incident } from "@/types/Incident/incident";
 
-export const getIncidents = async (): Promise<PaginatedResponse<Incident>> => {
-  const response = await fetch(`${API_BASE}incidents`, {
+export const getIncidents = async (
+  page = 1,
+): Promise<PaginatedResponse<Incident>> => {
+  const response = await fetch(`${API_BASE}incidents?page=${page}`, {
     method: "GET",
     credentials: "include",
   });
