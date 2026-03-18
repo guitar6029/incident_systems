@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\IncidentStatus;
+use App\Enums\IncidentSeverity;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -31,7 +32,7 @@ class IncidentController extends Controller
             ->when($request->severity, fn($q) => $q->severity($request->severity))
             ->when($request->user_id, fn($q) => $q->where('user_id', $request->user_id))
             ->orderBy($sort, $direction)
-            ->paginate($request->query($perPage));
+            ->paginate($perPage);
     }
 
 
@@ -43,7 +44,7 @@ class IncidentController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'severity' => 'required|in:low,medium,high',
+            'severity' => ['sometimes', new Enum(IncidentSeverity::class)],
             'status' => ['sometimes', new Enum(IncidentStatus::class)]
         ]);
 
@@ -72,7 +73,7 @@ class IncidentController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'severity' => 'in:low,medium,high'
+            'severity' => ['sometimes', new Enum(IncidentSeverity::class)]
         ]);
 
         $incident->update($validated);
