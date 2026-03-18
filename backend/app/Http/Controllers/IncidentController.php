@@ -9,25 +9,31 @@ use Illuminate\Validation\Rules\Enum;
 
 class IncidentController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $allowedSorts = ['created_at', 'severity', 'status'];
+        $allowedDirection = ['asc', 'desc'];
+        $allowedPerPage = [10, 20, 50, 100];
+
+        $sort = in_array($request->sort, $allowedSorts)
+            ? $request->sort : 'created_at';
+        $direction = in_array($request->direction, $allowedDirection)
+            ? $request->direction : 'desc';
+        $perPageInput = (int) $request->query('per_page');
+        $perPage = in_array($perPageInput, $allowedPerPage)
+            ? $perPageInput : 10;
 
         return Incident::query()
             ->when($request->severity, fn($q) => $q->severity($request->severity))
-            ->when($request->filled('sort'), fn($q) => $q->orderBy($request->sort))
-            ->paginate(10);
+            ->when($request->user_id, fn($q) => $q->where('user_id', $request->user_id))
+            ->orderBy($sort, $direction)
+            ->paginate($request->query($perPage));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -56,13 +62,7 @@ class IncidentController extends Controller
         return $incident;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Incident $incident)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
