@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Enums\IncidentStatus;
 use App\Enums\IncidentSeverity;
 use App\Models\Incident;
+use App\Services\IncidentService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 
 class IncidentController extends Controller
 {
     use AuthorizesRequests;
+
+    public function __construct(private IncidentService $service) {}
 
     /**
      * Display a listing of the resource.
@@ -41,7 +45,7 @@ class IncidentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -50,9 +54,7 @@ class IncidentController extends Controller
             'status' => ['sometimes', new Enum(IncidentStatus::class)]
         ]);
 
-        $validated['status'] = $validated['status'] ?? IncidentStatus::OPEN;
-
-        $incident = $request->user()->incidents()->create($validated);
+        $incident = $this->service->create($request->user(), $validated);
 
         return response()->json($incident, 201);
     }
@@ -75,12 +77,12 @@ class IncidentController extends Controller
         $this->authorize('update', $incident);
         $validated = $request->validate([
             'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'nullable|sometimes|string',
             'severity' => ['sometimes', new Enum(IncidentSeverity::class)],
             'status' => ['sometimes', new Enum(IncidentStatus::class)]
         ]);
 
-        $incident->update($validated);
+        $incident = $this->service->update($incident, $validated);
 
         return $incident;
     }
